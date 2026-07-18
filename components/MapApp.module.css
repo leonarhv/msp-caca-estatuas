@@ -2,6 +2,7 @@
   display: flex;
   flex-direction: column;
   height: 100vh;
+  height: 100dvh;
   overflow: hidden;
 }
 
@@ -15,6 +16,9 @@
 .mapWrap {
   flex: 1;
   min-width: 0;
+  position: relative;
+  z-index: 0;
+  isolation: isolate;
   background: #e8e6df;
   background-image:
     linear-gradient(

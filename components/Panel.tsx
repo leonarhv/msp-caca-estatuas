@@ -27,6 +27,16 @@ export default function Panel({ children, resultCount }: Props) {
     return () => document.removeEventListener("keydown", handleKey);
   }, [isModal, close]);
 
+  useEffect(() => {
+    if (!isModal) return;
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [isModal]);
+
   // Desktop: panel is always visible, no dialog semantics needed.
   // Mobile: panel is a bottom-sheet dialog toggled by the handle button.
   // The handle itself must stay outside aria-hidden so it's always reachable;
@@ -50,7 +60,16 @@ export default function Panel({ children, resultCount }: Props) {
         aria-expanded={open}
       >
         <span className={styles.bar} aria-hidden="true" />
-        <span>{open ? "Fechar" : `Ver filtros e lista (${resultCount})`}</span>
+        <span className={styles.handleCopy}>
+          <span>{open ? "Fechar filtros" : "Filtros e lista"}</span>
+          <span className={styles.handleMeta}>{resultCount} resultados</span>
+        </span>
+        <span
+          className={`${styles.chevron} ${open ? styles.chevronOpen : ""}`}
+          aria-hidden="true"
+        >
+          ⌃
+        </span>
       </button>
 
       <div
