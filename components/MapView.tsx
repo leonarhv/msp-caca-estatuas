@@ -17,6 +17,8 @@ interface Props {
   collected: Set<string>;
   onToggleCollected: (id: string) => void;
   userLoc: { lat: number; lng: number } | null;
+  locating: boolean;
+  onRequestLocation: () => void;
   focusStatueId: string | null;
   onFocusHandled: () => void;
 }
@@ -134,34 +136,47 @@ export default function MapView({
   collected,
   onToggleCollected,
   userLoc,
+  locating,
+  onRequestLocation,
   focusStatueId,
   onFocusHandled,
 }: Props) {
   const markerRefs = useRef<Record<string, L.Marker | null>>({});
+  const mapRef = useRef<L.Map | null>(null);
+
+  const handleLocate = () => {
+    if (userLoc) {
+      mapRef.current?.flyTo([userLoc.lat, userLoc.lng], 16, { duration: 0.6 });
+      return;
+    }
+    onRequestLocation();
+  };
 
   return (
-    <MapContainer
-      center={SP_CENTER}
-      zoom={12}
-      minZoom={10}
-      maxZoom={19}
-      style={{ height: "100%", width: "100%" }}
-      aria-label="Mapa de São Paulo com as estátuas da promoção Caça Estátuas"
-    >
-      <TileWithFallback />
-
-      <MarkerClusterGroup
-        maxClusterRadius={50}
-        iconCreateFunction={(cluster: any) => {
-          const count = cluster.getChildCount();
-          const size = count < 10 ? 34 : count < 30 ? 40 : 46;
-          return L.divIcon({
-            html: `<div class="marker-cluster-custom" style="width:${size}px;height:${size}px;">${count}</div>`,
-            className: "",
-            iconSize: [size, size],
-          });
-        }}
+    <div className="map-view">
+      <MapContainer
+        ref={mapRef}
+        center={SP_CENTER}
+        zoom={12}
+        minZoom={10}
+        maxZoom={19}
+        style={{ height: "100%", width: "100%" }}
+        aria-label="Mapa de São Paulo com as estátuas da promoção Caça Estátuas"
       >
+        <TileWithFallback />
+
+        <MarkerClusterGroup
+          maxClusterRadius={50}
+          iconCreateFunction={(cluster: any) => {
+            const count = cluster.getChildCount();
+            const size = count < 10 ? 34 : count < 30 ? 40 : 46;
+            return L.divIcon({
+              html: `<div class="marker-cluster-custom" style="width:${size}px;height:${size}px;">${count}</div>`,
+              className: "",
+              iconSize: [size, size],
+            });
+          }}
+        >
         {statues.map((s) => {
           const isOn = collected.has(s.id);
           const image = characterImage(s.name);
@@ -221,16 +236,35 @@ export default function MapView({
             </Marker>
           );
         })}
-      </MarkerClusterGroup>
+        </MarkerClusterGroup>
 
-      {userLoc && <UserLocationMarker loc={userLoc} />}
+        {userLoc && <UserLocationMarker loc={userLoc} />}
 
-      <FocusController
-        statues={statues}
-        focusStatueId={focusStatueId}
-        onFocusHandled={onFocusHandled}
-        markerRefs={markerRefs}
-      />
-    </MapContainer>
+        <FocusController
+          statues={statues}
+          focusStatueId={focusStatueId}
+          onFocusHandled={onFocusHandled}
+          markerRefs={markerRefs}
+        />
+      </MapContainer>
+
+      <button
+        type="button"
+        className="locate-control"
+        onClick={handleLocate}
+        disabled={locating}
+        aria-label={
+          locating
+            ? "Obtendo sua localização"
+            : "Centralizar na minha localização"
+        }
+        title={locating ? "Obtendo sua localização…" : "Minha localização"}
+      >
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="12" cy="12" r="4" />
+          <path d="M12 2v3M12 19v3M2 12h3M19 12h3" />
+        </svg>
+      </button>
+    </div>
   );
 }

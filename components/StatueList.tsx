@@ -118,7 +118,11 @@ export default function StatueList({
                       aria-label={`Capturar ${s.name} no site oficial (abre em nova aba)`}
                       title="Capturar no site oficial"
                     >
-                      📸
+                      <span aria-hidden="true">📸</span>
+                      <span>Capturar</span>
+                      <span className={styles.external} aria-hidden="true">
+                        ↗
+                      </span>
                     </a>
                     <button
                       type="button"
@@ -131,7 +135,10 @@ export default function StatueList({
                           : `Marcar ${s.name} como coletada`
                       }
                     >
-                      {isOn ? "✓" : ""}
+                      <span className={styles.checkBox} aria-hidden="true">
+                        {isOn ? "✓" : ""}
+                      </span>
+                      <span>{isOn ? "Visitei" : "Já visitei"}</span>
                     </button>
                   </span>
                 </div>

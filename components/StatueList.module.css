@@ -39,7 +39,7 @@
   background: #fff5f6;
 }
 .cardCollected {
-  opacity: 0.55;
+  background: #f3faf6;
 }
 
 .badge {
@@ -67,8 +67,10 @@
 }
 
 .body {
+  display: block;
   flex: 1;
   min-width: 0;
+  overflow: hidden;
 }
 .cardTitle {
   font-weight: 800;
@@ -80,6 +82,8 @@
   color: var(--ink);
 }
 .cardLocal {
+  display: block;
+  max-width: 100%;
   font-size: 12px;
   color: var(--muted);
   margin-top: 2px;
@@ -116,36 +120,72 @@
 .cardActions {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  align-items: stretch;
+  gap: 5px;
   flex-shrink: 0;
+  width: 92px;
 }
-.check,
 .capture {
-  flex-shrink: 0;
-  width: 36px;
-  height: 36px;
+  min-height: 36px;
   border-radius: 8px;
   border: 2px solid var(--ink);
   background: #fff;
-  display: flex;
+  color: var(--ink);
+  display: inline-flex;
   align-items: center;
   justify-content: center;
+  gap: 4px;
   cursor: pointer;
-  font-size: 15px;
+  font-size: 11px;
+  font-weight: 900;
   margin-top: 1px;
   font-family: inherit;
-}
-.capture {
   text-decoration: none;
-  color: var(--ink);
 }
 .capture:hover {
-  background: #fff4ce;
+  background: var(--panel);
+}
+.external {
+  font-size: 12px;
+  margin-left: 1px;
+}
+.check {
+  min-height: 29px;
+  padding: 3px 2px;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  color: var(--muted);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 10.5px;
+  font-weight: 800;
+}
+.check:hover {
+  background: var(--panel);
+  color: var(--ink);
+}
+.checkBox {
+  width: 15px;
+  height: 15px;
+  border: 1.5px solid currentColor;
+  border-radius: 4px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  line-height: 1;
 }
 .checkOn {
-  background: #1fa05a;
-  border-color: #1fa05a;
-  color: #fff;
+  color: #167a45;
+}
+.checkOn:hover {
+  background: #e5f5eb;
+  color: #12683a;
 }
 
 .emptyState {

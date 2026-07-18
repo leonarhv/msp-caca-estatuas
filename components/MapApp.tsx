@@ -97,6 +97,8 @@ export default function MapApp({ initialStatues, missions }: Props) {
               collected={collected}
               onToggleCollected={toggleCollected}
               userLoc={userLoc}
+              locating={locating}
+              onRequestLocation={request}
               focusStatueId={focusStatueId}
               onFocusHandled={() => setFocusStatueId(null)}
             />
