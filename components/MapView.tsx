@@ -2,7 +2,15 @@
 
 import L from "leaflet";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { MapContainer, Marker, Popup, TileLayer, useMap } from "react-leaflet";
+import {
+  Circle,
+  MapContainer,
+  Marker,
+  Popup,
+  TileLayer,
+  Tooltip,
+  useMap,
+} from "react-leaflet";
 import MarkerClusterGroup from "react-leaflet-cluster";
 import { characterImage } from "@/lib/characterImages";
 import {
@@ -24,6 +32,7 @@ interface Props {
 }
 
 const SP_CENTER: [number, number] = [-23.5505, -46.6333];
+const CAPTURE_RADIUS_METERS = 250;
 
 function initialOf(name: string): string {
   return name
@@ -143,6 +152,13 @@ export default function MapView({
 }: Props) {
   const markerRefs = useRef<Record<string, L.Marker | null>>({});
   const mapRef = useRef<L.Map | null>(null);
+  const [selectedStatueId, setSelectedStatueId] = useState<string | null>(null);
+
+  const selectedStatue = statues.find((s) => s.id === selectedStatueId);
+
+  useEffect(() => {
+    if (focusStatueId) setSelectedStatueId(focusStatueId);
+  }, [focusStatueId]);
 
   const handleLocate = () => {
     if (userLoc) {
@@ -191,6 +207,9 @@ export default function MapView({
                 return undefined;
               }}
               alt={s.name}
+              eventHandlers={{
+                click: () => setSelectedStatueId(s.id),
+              }}
             >
               <Popup>
                 {image && (
@@ -237,6 +256,24 @@ export default function MapView({
           );
         })}
         </MarkerClusterGroup>
+
+        {selectedStatue && (
+          <Circle
+            center={[selectedStatue.lat, selectedStatue.lng]}
+            radius={CAPTURE_RADIUS_METERS}
+            pathOptions={{
+              color: TIER_COLOR[selectedStatue.tier] || "#333",
+              fillColor: TIER_COLOR[selectedStatue.tier] || "#333",
+              fillOpacity: 0.14,
+              opacity: 0.85,
+              weight: 2,
+            }}
+          >
+            <Tooltip direction="center" permanent>
+              Raio de captura: 250 m
+            </Tooltip>
+          </Circle>
+        )}
 
         {userLoc && <UserLocationMarker loc={userLoc} />}
 
