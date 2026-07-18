@@ -11,6 +11,177 @@
   pointer-events: none;
 }
 
+.economy {
+  position: fixed;
+  z-index: 3000;
+  inset: 0;
+  display: flex;
+  min-height: 100dvh;
+  padding: max(18px, env(safe-area-inset-top)) 18px max(18px, env(safe-area-inset-bottom));
+  flex-direction: column;
+  background: #000;
+  color: #fff;
+}
+
+.economyTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.economyBadge {
+  font-size: 12px;
+  font-weight: 850;
+}
+
+.mapButton,
+.retryButton,
+.finishButton {
+  border: 1px solid #4a4a4a;
+  border-radius: 10px;
+  background: #121212;
+  color: #fff;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.mapButton {
+  min-height: 42px;
+  padding: 8px 12px;
+}
+
+.economyCenter {
+  display: flex;
+  width: min(420px, 100%);
+  margin: auto;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.walkIcon {
+  font-size: 42px;
+  filter: grayscale(0.25);
+}
+
+.economyCenter h2 {
+  margin: 12px 0 4px;
+  font-size: 23px;
+}
+
+.economyCenter > p {
+  max-width: 310px;
+  margin: 0;
+  color: #999;
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.nearest {
+  display: flex;
+  width: 100%;
+  margin: 28px 0 18px;
+  padding: 18px;
+  border: 1px solid #272727;
+  border-radius: 14px;
+  flex-direction: column;
+  background: #080808;
+}
+
+.nearest span {
+  color: #888;
+  font-size: 11px;
+  font-weight: 750;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.nearest strong {
+  margin-top: 7px;
+  font-size: 20px;
+}
+
+.nearest b {
+  margin-top: 4px;
+  color: #54e58b;
+  font-size: 26px;
+}
+
+.wakeOk,
+.wakeWarning {
+  display: flex;
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid;
+  border-radius: 12px;
+  gap: 10px;
+  text-align: left;
+}
+
+.wakeOk {
+  border-color: #205d39;
+  background: #071a0f;
+  color: #72ed9e;
+}
+
+.wakeWarning {
+  border-color: #765d1a;
+  background: #1c1605;
+  color: #ffd566;
+}
+
+.wakeOk > span,
+.wakeWarning > span {
+  display: grid;
+  flex: 0 0 24px;
+  height: 24px;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+  place-items: center;
+  font-weight: 900;
+}
+
+.wakeOk strong,
+.wakeWarning strong,
+.wakeWarning small {
+  display: block;
+}
+
+.wakeOk strong,
+.wakeWarning strong {
+  font-size: 12px;
+}
+
+.wakeWarning small {
+  margin-top: 3px;
+  color: #baa665;
+  font-size: 10.5px;
+  line-height: 1.35;
+}
+
+.retryButton {
+  margin-top: 10px;
+  padding: 9px 12px;
+  font-size: 11px;
+}
+
+.finishButton {
+  align-self: center;
+  min-height: 44px;
+  padding: 9px 16px;
+  color: #bbb;
+}
+
+.economyAlert {
+  position: absolute;
+  right: 18px;
+  bottom: calc(82px + env(safe-area-inset-bottom));
+  left: 18px;
+  width: auto;
+  color: var(--ink);
+}
+
 .control,
 .alert {
   pointer-events: auto;

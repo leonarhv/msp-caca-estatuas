@@ -136,10 +136,14 @@ export default function MapApp({ initialStatues, missions }: Props) {
           <WalkingMode
             status={walking.status}
             error={walking.error}
-            wakeLockActive={walking.wakeLockActive}
+            wakeLockStatus={walking.wakeLockStatus}
+            coords={walking.coords}
+            statues={initialStatues}
+            collected={collected}
             nearbyStatue={nearbyStatue}
             onStart={walking.start}
             onStop={walking.stop}
+            onRetryWakeLock={walking.retryWakeLock}
             onOpenNearby={() => {
               if (nearbyStatue) handleSelect(nearbyStatue.id);
             }}

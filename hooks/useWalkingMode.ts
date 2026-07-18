@@ -10,6 +10,7 @@ const ALERT_STORAGE_KEY = "cacaestatuas-walking-alerts-v1";
 
 type Coords = { lat: number; lng: number; accuracy: number };
 type WalkingStatus = "idle" | "starting" | "active" | "error";
+export type WakeLockStatus = "idle" | "requesting" | "active" | "unsupported" | "blocked";
 
 interface Options {
   statues: Statue[];
@@ -45,9 +46,10 @@ export function useWalkingMode({ statues, collected, onNearby }: Options) {
   const [status, setStatus] = useState<WalkingStatus>("idle");
   const [coords, setCoords] = useState<Coords | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [wakeLockActive, setWakeLockActive] = useState(false);
+  const [wakeLockStatus, setWakeLockStatus] = useState<WakeLockStatus>("idle");
   const watchIdRef = useRef<number | null>(null);
   const wakeLockRef = useRef<WakeLockSentinel | null>(null);
+  const walkingIntentRef = useRef(false);
   const insideRef = useRef<Set<string>>(new Set());
   const statuesRef = useRef(statues);
   const collectedRef = useRef(collected);
@@ -61,15 +63,27 @@ export function useWalkingMode({ statues, collected, onNearby }: Options) {
 
   const requestWakeLock = useCallback(async () => {
     if (document.visibilityState !== "visible") return;
+    if (wakeLockRef.current) return;
+    if (!("wakeLock" in navigator)) {
+      setWakeLockStatus("unsupported");
+      return;
+    }
     try {
-      if (!("wakeLock" in navigator)) return;
+      setWakeLockStatus("requesting");
       const sentinel = await navigator.wakeLock.request("screen");
       if (!sentinel) return;
       wakeLockRef.current = sentinel;
-      setWakeLockActive(true);
-      sentinel.addEventListener("release", () => setWakeLockActive(false), { once: true });
+      setWakeLockStatus("active");
+      sentinel.addEventListener(
+        "release",
+        () => {
+          wakeLockRef.current = null;
+          if (walkingIntentRef.current) setWakeLockStatus("blocked");
+        },
+        { once: true },
+      );
     } catch {
-      setWakeLockActive(false);
+      setWakeLockStatus("blocked");
     }
   }, []);
 
@@ -117,6 +131,7 @@ export function useWalkingMode({ statues, collected, onNearby }: Options) {
   }, []);
 
   const stop = useCallback(() => {
+    walkingIntentRef.current = false;
     if (watchIdRef.current !== null) {
       navigator.geolocation.clearWatch(watchIdRef.current);
       watchIdRef.current = null;
@@ -124,7 +139,7 @@ export function useWalkingMode({ statues, collected, onNearby }: Options) {
     void wakeLockRef.current?.release();
     wakeLockRef.current = null;
     insideRef.current.clear();
-    setWakeLockActive(false);
+    setWakeLockStatus("idle");
     setStatus("idle");
   }, []);
 
@@ -136,6 +151,7 @@ export function useWalkingMode({ statues, collected, onNearby }: Options) {
     }
     setStatus("starting");
     setError(null);
+    walkingIntentRef.current = true;
 
     if ("Notification" in window && Notification.permission === "default") {
       void Notification.requestPermission().catch(() => undefined);
@@ -146,6 +162,7 @@ export function useWalkingMode({ statues, collected, onNearby }: Options) {
       processPosition,
       (positionError) => {
         if (positionError.code === positionError.PERMISSION_DENIED) {
+          walkingIntentRef.current = false;
           if (watchIdRef.current !== null) navigator.geolocation.clearWatch(watchIdRef.current);
           watchIdRef.current = null;
           setStatus("error");
@@ -174,5 +191,5 @@ export function useWalkingMode({ statues, collected, onNearby }: Options) {
 
   useEffect(() => stop, [stop]);
 
-  return { status, coords, error, wakeLockActive, start, stop };
+  return { status, coords, error, wakeLockStatus, start, stop, retryWakeLock: requestWakeLock };
 }
