@@ -69,9 +69,14 @@ export default function WalkingMode({
           <span className={styles.economyBadge}>
             <span className={styles.pulse} aria-hidden="true" /> Radar ativo · 250 m
           </span>
-          <button type="button" className={styles.mapButton} onClick={() => setEconomyView(false)}>
-            Ver mapa
-          </button>
+          <div className={styles.economyActions}>
+            <button type="button" className={styles.mapButton} onClick={() => setEconomyView(false)}>
+              Ver mapa
+            </button>
+            <button type="button" className={styles.topStopButton} onClick={onStop}>
+              Encerrar
+            </button>
+          </div>
         </div>
 
         <div className={styles.economyCenter}>
@@ -120,10 +125,6 @@ export default function WalkingMode({
             </button>
           </section>
         )}
-
-        <button type="button" className={styles.finishButton} onClick={onStop}>
-          Encerrar caminhada
-        </button>
       </section>
     );
   }
