@@ -35,5 +35,22 @@ export function useCollected() {
     });
   }, []);
 
-  return { collected, toggle, hydrated };
+  const mark = useCallback((id: string) => {
+    setCollected((prev) => {
+      if (prev.has(id)) return prev;
+
+      const next = new Set(prev).add(id);
+      try {
+        window.localStorage.setItem(
+          COLLECTED_STORAGE_KEY,
+          JSON.stringify([...next]),
+        );
+      } catch {
+        // storage full or unavailable; state still updates in-memory
+      }
+      return next;
+    });
+  }, []);
+
+  return { collected, toggle, mark, hydrated };
 }

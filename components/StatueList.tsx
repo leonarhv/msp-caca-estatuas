@@ -12,6 +12,7 @@ interface Props {
   collected: Set<string>;
   onSelect: (id: string) => void;
   onToggleCollected: (id: string) => void;
+  onCapture: (id: string) => void;
 }
 
 function initialOf(name: string): string {
@@ -27,6 +28,7 @@ export default function StatueList({
   collected,
   onSelect,
   onToggleCollected,
+  onCapture,
 }: Props) {
   return (
     <>
@@ -113,6 +115,7 @@ export default function StatueList({
                     <a
                       className={styles.capture}
                       href={officialStatueUrl(s.id)}
+                      onClick={() => onCapture(s.id)}
                       target="_blank"
                       rel="noopener noreferrer"
                       aria-label={`Capturar ${s.name} no site oficial (abre em nova aba)`}

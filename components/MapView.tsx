@@ -24,6 +24,7 @@ interface Props {
   statues: Statue[];
   collected: Set<string>;
   onToggleCollected: (id: string) => void;
+  onCapture: (id: string) => void;
   userLoc: { lat: number; lng: number } | null;
   locating: boolean;
   onRequestLocation: () => void;
@@ -147,6 +148,7 @@ export default function MapView({
   statues,
   collected,
   onToggleCollected,
+  onCapture,
   userLoc,
   locating,
   onRequestLocation,
@@ -237,6 +239,7 @@ export default function MapView({
                 <div className="popup-actions">
                   <a
                     href={officialStatueUrl(s.id)}
+                    onClick={() => onCapture(s.id)}
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label={`Capturar ${s.name} no site oficial (abre em nova aba)`}

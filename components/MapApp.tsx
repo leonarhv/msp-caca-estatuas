@@ -39,7 +39,11 @@ export default function MapApp({ initialStatues, missions }: Props) {
     setQuery,
   } = useUrlFilters();
 
-  const { collected, toggle: toggleCollected } = useCollected();
+  const {
+    collected,
+    toggle: toggleCollected,
+    mark: markCollected,
+  } = useCollected();
   const {
     coords: userLoc,
     loading: locating,
@@ -126,6 +130,7 @@ export default function MapApp({ initialStatues, missions }: Props) {
               statues={mapStatues}
               collected={collected}
               onToggleCollected={toggleCollected}
+              onCapture={markCollected}
               userLoc={effectiveUserLoc}
               locating={locating}
               onRequestLocation={request}
@@ -207,6 +212,7 @@ export default function MapApp({ initialStatues, missions }: Props) {
                 collected={collected}
                 onSelect={handleSelect}
                 onToggleCollected={toggleCollected}
+                onCapture={markCollected}
               />
           </div>
           <div
