@@ -328,6 +328,25 @@
   }
 }
 
+@media (max-width: 430px) {
+  .economyTop {
+    flex-wrap: wrap;
+  }
+
+  .economyBadge {
+    width: 100%;
+  }
+
+  .economyActions {
+    width: 100%;
+  }
+
+  .mapButton,
+  .topStopButton {
+    flex: 1 1 0;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .pulse { animation: none; }
 }
