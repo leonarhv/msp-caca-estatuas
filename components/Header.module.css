@@ -1,0 +1,80 @@
+.top {
+  position: relative;
+  background: var(--red);
+  color: #fff;
+  padding: 14px 18px 16px;
+  border-bottom: 4px solid var(--ink);
+  background-image: radial-gradient(
+    circle,
+    rgba(255, 255, 255, 0.18) 1.4px,
+    transparent 1.4px
+  );
+  background-size: 14px 14px;
+  z-index: 20;
+  flex-shrink: 0;
+}
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.title {
+  margin: 0;
+  font-size: 19px;
+  font-weight: 900;
+  letter-spacing: -0.01em;
+  text-shadow: 2px 2px 0 var(--ink);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.sub {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  text-shadow: none;
+  opacity: 0.92;
+  margin-top: 2px;
+  letter-spacing: 0;
+}
+.stats {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.pill {
+  background: #fff;
+  color: var(--ink);
+  border: 2.5px solid var(--ink);
+  border-radius: 999px;
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+  box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.25);
+}
+.dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  display: inline-block;
+  background: var(--red);
+}
+.pillYou {
+  background: var(--ink);
+  color: #fff;
+}
+
+@media (max-width: 760px) {
+  .title {
+    font-size: 16px;
+  }
+  .sub {
+    font-size: 10px;
+  }
+}
