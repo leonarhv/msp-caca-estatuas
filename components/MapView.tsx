@@ -118,7 +118,10 @@ function FocusController({
 
 function UserLocationMarker({ loc }: { loc: { lat: number; lng: number } }) {
   const map = useMap();
+  const centeredOnce = useRef(false);
   useEffect(() => {
+    if (centeredOnce.current) return;
+    centeredOnce.current = true;
     map.flyTo([loc.lat, loc.lng], 14, { duration: 0.6 });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loc.lat, loc.lng]);

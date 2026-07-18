@@ -1,9 +1,10 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { Suspense, useMemo, useState } from "react";
+import { Suspense, useCallback, useEffect, useMemo, useState } from "react";
 import { useCollected } from "@/hooks/useCollected";
 import { useGeolocation } from "@/hooks/useGeolocation";
+import { useWalkingMode } from "@/hooks/useWalkingMode";
 import { useUrlFilters } from "@/hooks/useUrlFilters";
 import { filterAndSortStatues } from "@/lib/filterStatues";
 import type { Statue } from "@/types/statue";
@@ -14,6 +15,7 @@ import styles from "./MapApp.module.css";
 import MissionList from "./MissionList";
 import Panel from "./Panel";
 import StatueList from "./StatueList";
+import WalkingMode from "./WalkingMode";
 
 const MapView = dynamic(() => import("./MapView"), {
   ssr: false,
@@ -48,6 +50,20 @@ export default function MapApp({ initialStatues, missions }: Props) {
   const [activeId, setActiveId] = useState<string | null>(null);
   const [focusStatueId, setFocusStatueId] = useState<string | null>(null);
   const [panelView, setPanelView] = useState<"statues" | "missions">("statues");
+  const [nearbyStatue, setNearbyStatue] = useState<Statue | null>(null);
+
+  const handleNearby = useCallback((statue: Statue) => {
+    setNearbyStatue(statue);
+    setActiveId(statue.id);
+    setFocusStatueId(statue.id);
+  }, []);
+
+  const walking = useWalkingMode({
+    statues: initialStatues,
+    collected,
+    onNearby: handleNearby,
+  });
+  const effectiveUserLoc = walking.coords ?? userLoc;
 
   const filteredStatues = useMemo(
     () =>
@@ -58,10 +74,17 @@ export default function MapApp({ initialStatues, missions }: Props) {
         hideCollected,
         collected,
         query,
-        userLoc,
+        userLoc: effectiveUserLoc,
       }),
-    [initialStatues, status, tiers, hideCollected, collected, query, userLoc],
+    [initialStatues, status, tiers, hideCollected, collected, query, effectiveUserLoc],
   );
+
+  const mapStatues = useMemo(() => {
+    if (!nearbyStatue || filteredStatues.some((s) => s.id === nearbyStatue.id)) {
+      return filteredStatues;
+    }
+    return [...filteredStatues, nearbyStatue];
+  }, [filteredStatues, nearbyStatue]);
 
   const installedCount = useMemo(
     () => initialStatues.filter((s) => s.installed).length,
@@ -72,6 +95,13 @@ export default function MapApp({ initialStatues, missions }: Props) {
     setActiveId(id);
     setFocusStatueId(id);
   };
+
+  useEffect(() => {
+    const id = new URLSearchParams(window.location.search).get("statue");
+    if (!id || !initialStatues.some((statue) => statue.id === id)) return;
+    setActiveId(id);
+    setFocusStatueId(id);
+  }, [initialStatues]);
 
   return (
     <div className={styles.app}>
@@ -93,16 +123,28 @@ export default function MapApp({ initialStatues, missions }: Props) {
             }
           >
             <MapView
-              statues={filteredStatues}
+              statues={mapStatues}
               collected={collected}
               onToggleCollected={toggleCollected}
-              userLoc={userLoc}
+              userLoc={effectiveUserLoc}
               locating={locating}
               onRequestLocation={request}
               focusStatueId={focusStatueId}
               onFocusHandled={() => setFocusStatueId(null)}
             />
           </Suspense>
+          <WalkingMode
+            status={walking.status}
+            error={walking.error}
+            wakeLockActive={walking.wakeLockActive}
+            nearbyStatue={nearbyStatue}
+            onStart={walking.start}
+            onStop={walking.stop}
+            onOpenNearby={() => {
+              if (nearbyStatue) handleSelect(nearbyStatue.id);
+            }}
+            onDismissNearby={() => setNearbyStatue(null)}
+          />
         </div>
 
         <Panel
