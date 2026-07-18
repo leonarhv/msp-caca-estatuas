@@ -4,6 +4,7 @@ import L from "leaflet";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { MapContainer, Marker, Popup, TileLayer, useMap } from "react-leaflet";
 import MarkerClusterGroup from "react-leaflet-cluster";
+import { characterImage } from "@/lib/characterImages";
 import {
   officialStatueUrl,
   TIER_COLOR,
@@ -31,11 +32,17 @@ function initialOf(name: string): string {
 
 function pinIcon(statue: Statue, isCollected: boolean) {
   const color = TIER_COLOR[statue.tier] || "#333";
-  const size = 30;
+  const image = characterImage(statue.name);
+  const size = image ? 42 : 30;
+  const content = isCollected
+    ? "✓"
+    : image
+      ? `<img src="${image}" alt="" />`
+      : initialOf(statue.name);
   const html = `<div class="statue-pin ${
     !statue.installed ? "faded" : ""
   }" style="width:${size}px;height:${size}px;background:${color};">
-      <span class="inner">${isCollected ? "✓" : initialOf(statue.name)}</span>
+      <span class="inner">${content}</span>
     </div>`;
   return L.divIcon({
     html,
@@ -157,6 +164,7 @@ export default function MapView({
       >
         {statues.map((s) => {
           const isOn = collected.has(s.id);
+          const image = characterImage(s.name);
           const gmaps = `https://www.google.com/maps/search/?api=1&query=${s.lat},${s.lng}`;
           return (
             <Marker
@@ -170,6 +178,14 @@ export default function MapView({
               alt={s.name}
             >
               <Popup>
+                {image && (
+                  <img
+                    className="popup-character"
+                    src={image}
+                    alt={s.name}
+                    loading="lazy"
+                  />
+                )}
                 <p className="popup-title">{s.name}</p>
                 <p className="popup-local">
                   {s.local}

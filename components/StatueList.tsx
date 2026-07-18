@@ -1,6 +1,7 @@
 "use client";
 
 import { officialStatueUrl, TIER_COLOR } from "@/lib/constants";
+import { characterImage } from "@/lib/characterImages";
 import { formatDistance } from "@/lib/geo";
 import type { StatueWithDistance } from "@/types/statue";
 import styles from "./StatueList.module.css";
@@ -44,6 +45,7 @@ export default function StatueList({
         <ul className={styles.list} aria-label="Lista de estátuas">
           {statues.map((s) => {
             const isOn = collected.has(s.id);
+            const image = characterImage(s.name);
             return (
               <li key={s.id} className={styles.item}>
                 <div
@@ -69,7 +71,18 @@ export default function StatueList({
                       style={{ background: TIER_COLOR[s.tier] }}
                       aria-hidden="true"
                     >
-                      {isOn ? "✓" : initialOf(s.name)}
+                      {isOn ? (
+                        "✓"
+                      ) : image ? (
+                        <img
+                          className={styles.character}
+                          src={image}
+                          alt=""
+                          loading="lazy"
+                        />
+                      ) : (
+                        initialOf(s.name)
+                      )}
                     </span>
                     <span className={styles.body}>
                       <span className={styles.cardTitle}>
