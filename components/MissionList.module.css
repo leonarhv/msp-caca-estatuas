@@ -1,0 +1,133 @@
+.missions {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  height: 100%;
+}
+.summary {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px;
+  border-bottom: 2px solid #e3e0d8;
+}
+.eyebrow {
+  display: block;
+  color: var(--red-dark);
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.heading {
+  margin: 2px 0 0;
+  font-size: 22px;
+  font-weight: 900;
+}
+.summaryStats {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 3px;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+.list {
+  list-style: none;
+  padding: 10px 10px 20px;
+  margin: 0;
+  overflow-y: auto;
+}
+.card {
+  display: flex;
+  gap: 10px;
+  padding: 12px;
+  margin-bottom: 8px;
+  border: 2px solid #dedbd3;
+  border-radius: 14px;
+  background: #fff;
+}
+.unlocked {
+  border-color: #1fa05a;
+  background: #f3fff8;
+}
+.icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  flex-shrink: 0;
+  border: 2px solid var(--ink);
+  border-radius: 12px;
+  background: var(--panel);
+  font-size: 21px;
+}
+.cardBody {
+  flex: 1;
+  min-width: 0;
+}
+.cardHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+}
+.title {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 900;
+  line-height: 1.25;
+}
+.points {
+  flex-shrink: 0;
+  color: #7a5700;
+  background: #fff4ce;
+  border-radius: 999px;
+  padding: 3px 7px;
+  font-size: 10px;
+  font-weight: 900;
+}
+.description {
+  margin: 5px 0 10px;
+  color: var(--muted);
+  font-size: 11.5px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+.progressMeta {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 4px;
+  color: var(--muted);
+  font-size: 10.5px;
+  font-weight: 800;
+}
+.progressTrack {
+  height: 8px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #e4e1da;
+}
+.progressTrack span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--red);
+}
+.unlocked .progressTrack span {
+  background: #1fa05a;
+}
+
+@media (max-width: 380px) {
+  .summary {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+  .summaryStats {
+    align-items: flex-start;
+  }
+}

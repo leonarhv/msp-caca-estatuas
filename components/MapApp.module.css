@@ -57,3 +57,53 @@
   font-weight: 700;
   font-size: 13px;
 }
+
+.viewTabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  padding: 8px 10px;
+  border-bottom: 2px solid #e3e0d8;
+  background: var(--paper);
+  flex-shrink: 0;
+}
+.viewTabs button {
+  min-height: 42px;
+  border: 2px solid transparent;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 900;
+  cursor: pointer;
+}
+.viewTabs button:hover {
+  background: var(--panel);
+}
+.viewTabs .activeTab {
+  border-color: var(--ink);
+  background: var(--ink);
+  color: #fff;
+}
+.tabBadge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  margin-left: 5px;
+  padding: 0 5px;
+  border-radius: 999px;
+  background: var(--red);
+  color: #fff;
+  font-size: 10px;
+}
+.panelView {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+.panelView[hidden] {
+  display: none;
+}

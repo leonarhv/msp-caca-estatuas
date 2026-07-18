@@ -1,6 +1,6 @@
 "use client";
 
-import { TIER_COLOR } from "@/lib/constants";
+import { officialStatueUrl, TIER_COLOR } from "@/lib/constants";
 import { formatDistance } from "@/lib/geo";
 import type { StatueWithDistance } from "@/types/statue";
 import styles from "./StatueList.module.css";
@@ -96,19 +96,31 @@ export default function StatueList({
                     </span>
                   </button>
 
-                  <button
-                    type="button"
-                    className={`${styles.check} ${isOn ? styles.checkOn : ""}`}
-                    onClick={() => onToggleCollected(s.id)}
-                    aria-pressed={isOn}
-                    aria-label={
-                      isOn
-                        ? `Desmarcar ${s.name} como coletada`
-                        : `Marcar ${s.name} como coletada`
-                    }
-                  >
-                    {isOn ? "✓" : ""}
-                  </button>
+                  <span className={styles.cardActions}>
+                    <a
+                      className={styles.capture}
+                      href={officialStatueUrl(s.id)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={`Capturar ${s.name} no site oficial (abre em nova aba)`}
+                      title="Capturar no site oficial"
+                    >
+                      📸
+                    </a>
+                    <button
+                      type="button"
+                      className={`${styles.check} ${isOn ? styles.checkOn : ""}`}
+                      onClick={() => onToggleCollected(s.id)}
+                      aria-pressed={isOn}
+                      aria-label={
+                        isOn
+                          ? `Desmarcar ${s.name} como coletada`
+                          : `Marcar ${s.name} como coletada`
+                      }
+                    >
+                      {isOn ? "✓" : ""}
+                    </button>
+                  </span>
                 </div>
               </li>
             );

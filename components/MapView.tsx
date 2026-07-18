@@ -4,7 +4,11 @@ import L from "leaflet";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { MapContainer, Marker, Popup, TileLayer, useMap } from "react-leaflet";
 import MarkerClusterGroup from "react-leaflet-cluster";
-import { TIER_COLOR, TILE_PROVIDERS } from "@/lib/constants";
+import {
+  officialStatueUrl,
+  TIER_COLOR,
+  TILE_PROVIDERS,
+} from "@/lib/constants";
 import type { Statue } from "@/types/statue";
 
 interface Props {
@@ -178,6 +182,14 @@ export default function MapView({
                 </p>
                 <p className="popup-desc">{s.desc}</p>
                 <div className="popup-actions">
+                  <a
+                    href={officialStatueUrl(s.id)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={`Capturar ${s.name} no site oficial (abre em nova aba)`}
+                  >
+                    📸 Capturar
+                  </a>
                   <a href={gmaps} target="_blank" rel="noopener noreferrer">
                     🧭 Google Maps
                   </a>

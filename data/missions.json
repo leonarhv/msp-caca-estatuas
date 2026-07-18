@@ -1,0 +1,21 @@
+{
+  "data": [
+    { "id": 10, "name": "O Caçador Urbano", "description": "Colete 10 estátuas em um único dia.", "image": null, "hook": "cacador_urbano", "points": 500, "unlocked": false, "progress": { "current": 1, "target": 10 } },
+    { "id": 11, "name": "Mônica Especialista", "description": "Capture as 6 estátuas da Mônica.", "image": null, "hook": "monica_especialista", "points": 250, "unlocked": false, "progress": { "current": 0, "target": 6 } },
+    { "id": 12, "name": "Caçador de Parques", "description": "Capture todas as estátuas localizadas nos parques da cidade. (DICA: Na busca, procure por \"Parque\").", "image": null, "hook": "cacador_parques", "points": 150, "unlocked": false, "progress": { "current": 0, "target": 11 } },
+    { "id": 13, "name": "Amigo da Turma", "description": "Capture 5 personagens diferentes no mesmo dia.", "image": null, "hook": "amigo_turma", "points": 450, "unlocked": false, "progress": { "current": 1, "target": 5 } },
+    { "id": 14, "name": "Detetive Cebolino", "description": "Capture as 2 estátuas douradas do Cebolinha.", "image": null, "hook": "detetive_cebolino", "points": 200, "unlocked": false, "progress": { "current": 0, "target": 2 } },
+    { "id": 15, "name": "Fuga da Garoa", "description": "Capture uma estátua do Cascão em um dia de chuva. Vai começar a chover no jogo também.", "image": null, "hook": "fuga_garoa", "points": 900, "unlocked": false, "progress": { "current": 0, "target": 1 } },
+    { "id": 16, "name": "Fome de Magali", "description": "Capture 3 estátuas da Magali no horário do almoço - das 12h às 14h.", "image": null, "hook": "fome_magali", "points": 350, "unlocked": false, "progress": { "current": 0, "target": 3 } },
+    { "id": 17, "name": "Plano Infalível", "description": "Capture pelo menos 1 estátua por dia durante 7 dias consecutivos.", "image": null, "hook": "plano_infalivel", "points": 500, "unlocked": false, "progress": { "current": 0, "target": 7 } },
+    { "id": 18, "name": "Coelhada Voadora", "description": "Capture uma estátua do Cebolinha e, logo em seguida, uma da Mônica.", "image": null, "hook": "coelhada_voadora", "points": 300, "unlocked": false, "progress": { "current": 0, "target": 2 } },
+    { "id": 19, "name": "Dona da Avenida", "description": "Capture as duas estátuas localizadas na Avenida Paulista (Mônica Original e Do Contra Dourado)", "image": null, "hook": "dona_avenida", "points": 300, "unlocked": false, "progress": { "current": 0, "target": 2 } },
+    { "id": 20, "name": "Campeão da Turminha", "description": "Capturar todas as 91 estátuas.", "image": null, "hook": "campeao_turminha", "points": 1200, "unlocked": false, "progress": { "current": 1, "target": 91 } },
+    { "id": 21, "name": "Turma do Limoeiro", "description": "Capture pelo menos uma estátua de cada um dos 5 personagens clássicos (Mônica, Magali, Milena, Cebolinha e Cascão).", "image": null, "hook": "turma_limoeiro", "points": 150, "unlocked": false, "progress": { "current": 0, "target": 5 } },
+    { "id": 22, "name": "Roteiro do Louco", "description": "Capture todas as 3 estátuas do Louco.", "image": null, "hook": "roteiro_louco", "points": 250, "unlocked": false, "progress": { "current": 0, "target": 3 } },
+    { "id": 23, "name": "Turminha de Ouro", "description": "Capture todas as estátuas douradas do jogo.", "image": null, "hook": "turminha_ouro", "points": 770, "unlocked": false, "progress": { "current": 0, "target": 30 } },
+    { "id": 24, "name": "Coração de São Paulo", "description": "Capture pelo menos 3 estátuas na região da Sé (Centro).", "image": null, "hook": "coracao_sao_paulo", "points": 250, "unlocked": false, "progress": { "current": 0, "target": 3 } },
+    { "id": 25, "name": "Colecionador de Toys", "description": "Capture todas as versões \"TOY\" dos personagens.", "image": null, "hook": "colecionador_toys", "points": 650, "unlocked": false, "progress": { "current": 0, "target": 18 } },
+    { "id": 26, "name": "Explorador dos Extremos", "description": "Capture as Estátuas do Floquinho (Pça. Júlio César de Campos), Jotalhão (Pça. Lions Clube) e Franjinha (Av. Inácio Monteiro) no mesmo dia.", "image": null, "hook": "explorador_extremos", "points": 1000, "unlocked": false, "progress": { "current": 0, "target": 3 } }
+  ]
+}

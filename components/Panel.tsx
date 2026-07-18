@@ -7,10 +7,10 @@ import styles from "./Panel.module.css";
 
 interface Props {
   children: React.ReactNode;
-  resultCount: number;
+  summary: string;
 }
 
-export default function Panel({ children, resultCount }: Props) {
+export default function Panel({ children, summary }: Props) {
   const isMobile = useMediaQuery("(max-width: 760px)");
   const [open, setOpen] = useState(false);
   const isModal = isMobile && open;
@@ -62,7 +62,7 @@ export default function Panel({ children, resultCount }: Props) {
         <span className={styles.bar} aria-hidden="true" />
         <span className={styles.handleCopy}>
           <span>{open ? "Fechar filtros" : "Filtros e lista"}</span>
-          <span className={styles.handleMeta}>{resultCount} resultados</span>
+          <span className={styles.handleMeta}>{summary}</span>
         </span>
         <span
           className={`${styles.chevron} ${open ? styles.chevronOpen : ""}`}

@@ -16,6 +16,12 @@ export const TIER_ORDER: Tier[] = ["gold", "silver", "colored"];
 
 export const COLLECTED_STORAGE_KEY = "cacaestatuas-collected-v1";
 
+export const OFFICIAL_SITE_URL = "https://cacaasestatuas.prefeitura.sp.gov.br";
+
+export function officialStatueUrl(id: string): string {
+  return `${OFFICIAL_SITE_URL}/estatua/${encodeURIComponent(id)}`;
+}
+
 export const TILE_PROVIDERS = [
   {
     url: "https://tile.openstreetmap.org/{z}/{x}/{y}.png",

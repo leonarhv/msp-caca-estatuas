@@ -104,10 +104,17 @@
   margin-top: 3px;
 }
 
-.check {
+.cardActions {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
   flex-shrink: 0;
-  width: 32px;
-  height: 32px;
+}
+.check,
+.capture {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
   border-radius: 8px;
   border: 2px solid var(--ink);
   background: #fff;
@@ -118,6 +125,13 @@
   font-size: 15px;
   margin-top: 1px;
   font-family: inherit;
+}
+.capture {
+  text-decoration: none;
+  color: var(--ink);
+}
+.capture:hover {
+  background: #fff4ce;
 }
 .checkOn {
   background: #1fa05a;

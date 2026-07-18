@@ -7,9 +7,11 @@ import { useGeolocation } from "@/hooks/useGeolocation";
 import { useUrlFilters } from "@/hooks/useUrlFilters";
 import { filterAndSortStatues } from "@/lib/filterStatues";
 import type { Statue } from "@/types/statue";
+import type { Mission } from "@/types/mission";
 import FilterControls from "./FilterControls";
 import Header from "./Header";
 import styles from "./MapApp.module.css";
+import MissionList from "./MissionList";
 import Panel from "./Panel";
 import StatueList from "./StatueList";
 
@@ -20,9 +22,10 @@ const MapView = dynamic(() => import("./MapView"), {
 
 interface Props {
   initialStatues: Statue[];
+  missions: Mission[];
 }
 
-export default function MapApp({ initialStatues }: Props) {
+export default function MapApp({ initialStatues, missions }: Props) {
   const {
     status,
     tiers,
@@ -44,6 +47,7 @@ export default function MapApp({ initialStatues }: Props) {
 
   const [activeId, setActiveId] = useState<string | null>(null);
   const [focusStatueId, setFocusStatueId] = useState<string | null>(null);
+  const [panelView, setPanelView] = useState<"statues" | "missions">("statues");
 
   const filteredStatues = useMemo(
     () =>
@@ -99,28 +103,71 @@ export default function MapApp({ initialStatues }: Props) {
           </Suspense>
         </div>
 
-        <Panel resultCount={filteredStatues.length}>
-          <div id="statue-list-panel">
-            <FilterControls
-              query={query}
-              onQueryChange={setQuery}
-              status={status}
-              onStatusChange={setStatus}
-              tiers={tiers}
-              onToggleTier={toggleTier}
-              hideCollected={hideCollected}
-              onHideCollectedChange={setHideCollected}
-              onRequestLocation={request}
-              locating={locating}
-              locationError={locationError}
-            />
-            <StatueList
-              statues={filteredStatues}
-              activeId={activeId}
-              collected={collected}
-              onSelect={handleSelect}
-              onToggleCollected={toggleCollected}
-            />
+        <Panel
+          summary={
+            panelView === "statues"
+              ? `${filteredStatues.length} resultados`
+              : `${missions.length} missões`
+          }
+        >
+          <div className={styles.viewTabs} role="tablist" aria-label="Conteúdo do painel">
+            <button
+              type="button"
+              role="tab"
+              aria-selected={panelView === "statues"}
+              aria-controls="statue-list-panel"
+              className={panelView === "statues" ? styles.activeTab : ""}
+              onClick={() => setPanelView("statues")}
+            >
+              📍 Estátuas
+            </button>
+            <button
+              type="button"
+              role="tab"
+              aria-selected={panelView === "missions"}
+              aria-controls="missions-panel"
+              className={panelView === "missions" ? styles.activeTab : ""}
+              onClick={() => setPanelView("missions")}
+            >
+              🎯 Missões
+              <span className={styles.tabBadge}>{missions.length}</span>
+            </button>
+          </div>
+
+          <div
+            id="statue-list-panel"
+            role="tabpanel"
+            className={styles.panelView}
+            hidden={panelView !== "statues"}
+          >
+              <FilterControls
+                query={query}
+                onQueryChange={setQuery}
+                status={status}
+                onStatusChange={setStatus}
+                tiers={tiers}
+                onToggleTier={toggleTier}
+                hideCollected={hideCollected}
+                onHideCollectedChange={setHideCollected}
+                onRequestLocation={request}
+                locating={locating}
+                locationError={locationError}
+              />
+              <StatueList
+                statues={filteredStatues}
+                activeId={activeId}
+                collected={collected}
+                onSelect={handleSelect}
+                onToggleCollected={toggleCollected}
+              />
+          </div>
+          <div
+            id="missions-panel"
+            role="tabpanel"
+            className={styles.panelView}
+            hidden={panelView !== "missions"}
+          >
+            <MissionList missions={missions} />
           </div>
         </Panel>
       </div>
