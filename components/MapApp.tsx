@@ -113,11 +113,13 @@ export default function MapApp({ initialStatues, missions }: Props) {
         Pular para a lista de estátuas
       </a>
 
-      <Header
-        installedCount={installedCount}
-        totalCount={initialStatues.length}
-        collectedCount={collected.size}
-      />
+      {walking.status !== "active" && walking.status !== "starting" && (
+        <Header
+          installedCount={installedCount}
+          totalCount={initialStatues.length}
+          collectedCount={collected.size}
+        />
+      )}
 
       <div className={styles.bodyWrap}>
         <div className={styles.mapWrap}>
@@ -141,16 +143,19 @@ export default function MapApp({ initialStatues, missions }: Props) {
           <WalkingMode
             status={walking.status}
             error={walking.error}
-            wakeLockStatus={walking.wakeLockStatus}
             coords={walking.coords}
+            heading={walking.heading}
+            compassAvailable={walking.compassAvailable}
             statues={initialStatues}
             collected={collected}
             nearbyStatue={nearbyStatue}
             onStart={walking.start}
             onStop={walking.stop}
-            onRetryWakeLock={walking.retryWakeLock}
             onOpenNearby={() => {
-              if (nearbyStatue) handleSelect(nearbyStatue.id);
+              if (nearbyStatue) {
+                walking.stop();
+                handleSelect(nearbyStatue.id);
+              }
             }}
             onDismissNearby={() => setNearbyStatue(null)}
           />

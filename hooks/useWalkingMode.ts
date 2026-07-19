@@ -10,7 +10,13 @@ const ALERT_STORAGE_KEY = "cacaestatuas-walking-alerts-v1";
 
 type Coords = { lat: number; lng: number; accuracy: number };
 type WalkingStatus = "idle" | "starting" | "active" | "error";
-export type WakeLockStatus = "idle" | "requesting" | "active" | "unsupported" | "blocked";
+type OrientationPermissionEvent = typeof DeviceOrientationEvent & {
+  requestPermission?: () => Promise<"granted" | "denied">;
+};
+
+type CompassOrientationEvent = DeviceOrientationEvent & {
+  webkitCompassHeading?: number;
+};
 
 interface Options {
   statues: Statue[];
@@ -46,9 +52,9 @@ export function useWalkingMode({ statues, collected, onNearby }: Options) {
   const [status, setStatus] = useState<WalkingStatus>("idle");
   const [coords, setCoords] = useState<Coords | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [wakeLockStatus, setWakeLockStatus] = useState<WakeLockStatus>("idle");
+  const [heading, setHeading] = useState<number | null>(null);
+  const [compassAvailable, setCompassAvailable] = useState(true);
   const watchIdRef = useRef<number | null>(null);
-  const wakeLockRef = useRef<WakeLockSentinel | null>(null);
   const walkingIntentRef = useRef(false);
   const insideRef = useRef<Set<string>>(new Set());
   const statuesRef = useRef(statues);
@@ -61,30 +67,17 @@ export function useWalkingMode({ statues, collected, onNearby }: Options) {
     onNearbyRef.current = onNearby;
   }, [statues, collected, onNearby]);
 
-  const requestWakeLock = useCallback(async () => {
-    if (document.visibilityState !== "visible") return;
-    if (wakeLockRef.current) return;
-    if (!("wakeLock" in navigator)) {
-      setWakeLockStatus("unsupported");
-      return;
-    }
-    try {
-      setWakeLockStatus("requesting");
-      const sentinel = await navigator.wakeLock.request("screen");
-      if (!sentinel) return;
-      wakeLockRef.current = sentinel;
-      setWakeLockStatus("active");
-      sentinel.addEventListener(
-        "release",
-        () => {
-          wakeLockRef.current = null;
-          if (walkingIntentRef.current) setWakeLockStatus("blocked");
-        },
-        { once: true },
-      );
-    } catch {
-      setWakeLockStatus("blocked");
-    }
+  const processOrientation = useCallback((rawEvent: DeviceOrientationEvent) => {
+    const event = rawEvent as CompassOrientationEvent;
+    const screenAngle = screen.orientation?.angle ?? 0;
+    const baseHeading =
+      typeof event.webkitCompassHeading === "number"
+        ? event.webkitCompassHeading
+        : typeof event.alpha === "number"
+          ? 360 - event.alpha
+          : null;
+    if (baseHeading === null) return;
+    setHeading((baseHeading + screenAngle + 360) % 360);
   }, []);
 
   const processPosition = useCallback((position: GeolocationPosition) => {
@@ -94,6 +87,9 @@ export function useWalkingMode({ statues, collected, onNearby }: Options) {
       accuracy: position.coords.accuracy,
     };
     setCoords(next);
+    if (position.coords.heading !== null && Number.isFinite(position.coords.heading)) {
+      setHeading((current) => current ?? position.coords.heading);
+    }
     setStatus("active");
     setError(null);
 
@@ -136,14 +132,14 @@ export function useWalkingMode({ statues, collected, onNearby }: Options) {
       navigator.geolocation.clearWatch(watchIdRef.current);
       watchIdRef.current = null;
     }
-    void wakeLockRef.current?.release();
-    wakeLockRef.current = null;
+    window.removeEventListener("deviceorientation", processOrientation);
     insideRef.current.clear();
-    setWakeLockStatus("idle");
+    setHeading(null);
+    setCompassAvailable(true);
     setStatus("idle");
-  }, []);
+  }, [processOrientation]);
 
-  const start = useCallback(() => {
+  const start = useCallback(async () => {
     if (!("geolocation" in navigator)) {
       setError("Este navegador não oferece acesso à localização.");
       setStatus("error");
@@ -156,7 +152,23 @@ export function useWalkingMode({ statues, collected, onNearby }: Options) {
     if ("Notification" in window && Notification.permission === "default") {
       void Notification.requestPermission().catch(() => undefined);
     }
-    void requestWakeLock();
+    if ("DeviceOrientationEvent" in window) {
+      try {
+        const orientationApi = DeviceOrientationEvent as OrientationPermissionEvent;
+        const permission = orientationApi.requestPermission
+          ? await orientationApi.requestPermission()
+          : "granted";
+        if (permission === "granted") {
+          window.addEventListener("deviceorientation", processOrientation);
+        } else {
+          setCompassAvailable(false);
+        }
+      } catch {
+        setCompassAvailable(false);
+      }
+    } else {
+      setCompassAvailable(false);
+    }
 
     watchIdRef.current = navigator.geolocation.watchPosition(
       processPosition,
@@ -177,19 +189,9 @@ export function useWalkingMode({ statues, collected, onNearby }: Options) {
         timeout: 30_000,
       },
     );
-  }, [processPosition, requestWakeLock]);
-
-  useEffect(() => {
-    const resumeWakeLock = () => {
-      if (document.visibilityState === "visible" && watchIdRef.current !== null) {
-        void requestWakeLock();
-      }
-    };
-    document.addEventListener("visibilitychange", resumeWakeLock);
-    return () => document.removeEventListener("visibilitychange", resumeWakeLock);
-  }, [requestWakeLock]);
+  }, [processOrientation, processPosition]);
 
   useEffect(() => stop, [stop]);
 
-  return { status, coords, error, wakeLockStatus, start, stop, retryWakeLock: requestWakeLock };
+  return { status, coords, error, heading, compassAvailable, start, stop };
 }
