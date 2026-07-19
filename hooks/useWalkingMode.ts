@@ -16,7 +16,10 @@ type OrientationPermissionEvent = typeof DeviceOrientationEvent & {
 
 type CompassOrientationEvent = DeviceOrientationEvent & {
   webkitCompassHeading?: number;
+  webkitCompassAccuracy?: number;
 };
+
+type OrientationEventName = "deviceorientation" | "deviceorientationabsolute";
 
 interface Options {
   statues: Statue[];
@@ -55,6 +58,8 @@ export function useWalkingMode({ statues, collected, onNearby }: Options) {
   const [heading, setHeading] = useState<number | null>(null);
   const [compassAvailable, setCompassAvailable] = useState(true);
   const watchIdRef = useRef<number | null>(null);
+  const orientationEventRef = useRef<OrientationEventName | null>(null);
+  const headingRef = useRef<number | null>(null);
   const walkingIntentRef = useRef(false);
   const insideRef = useRef<Set<string>>(new Set());
   const statuesRef = useRef(statues);
@@ -74,10 +79,17 @@ export function useWalkingMode({ statues, collected, onNearby }: Options) {
       typeof event.webkitCompassHeading === "number"
         ? event.webkitCompassHeading
         : typeof event.alpha === "number"
-          ? 360 - event.alpha
+          ? 360 - event.alpha + screenAngle
           : null;
     if (baseHeading === null) return;
-    setHeading((baseHeading + screenAngle + 360) % 360);
+    const nextHeading = (baseHeading + 360) % 360;
+
+    // Smooth sensor noise without ever averaging across the 0/360 boundary.
+    const previous = headingRef.current;
+    const delta = previous === null ? 0 : ((nextHeading - previous + 540) % 360) - 180;
+    const smoothed = previous === null ? nextHeading : (previous + delta * 0.24 + 360) % 360;
+    headingRef.current = smoothed;
+    setHeading(smoothed);
   }, []);
 
   const processPosition = useCallback((position: GeolocationPosition) => {
@@ -88,7 +100,11 @@ export function useWalkingMode({ statues, collected, onNearby }: Options) {
     };
     setCoords(next);
     if (position.coords.heading !== null && Number.isFinite(position.coords.heading)) {
-      setHeading((current) => current ?? position.coords.heading);
+      setHeading((current) => {
+        if (current !== null) return current;
+        headingRef.current = position.coords.heading;
+        return position.coords.heading;
+      });
     }
     setStatus("active");
     setError(null);
@@ -132,8 +148,15 @@ export function useWalkingMode({ statues, collected, onNearby }: Options) {
       navigator.geolocation.clearWatch(watchIdRef.current);
       watchIdRef.current = null;
     }
-    window.removeEventListener("deviceorientation", processOrientation);
+    if (orientationEventRef.current) {
+      window.removeEventListener(
+        orientationEventRef.current,
+        processOrientation as EventListener,
+      );
+      orientationEventRef.current = null;
+    }
     insideRef.current.clear();
+    headingRef.current = null;
     setHeading(null);
     setCompassAvailable(true);
     setStatus("idle");
@@ -149,9 +172,6 @@ export function useWalkingMode({ statues, collected, onNearby }: Options) {
     setError(null);
     walkingIntentRef.current = true;
 
-    if ("Notification" in window && Notification.permission === "default") {
-      void Notification.requestPermission().catch(() => undefined);
-    }
     if ("DeviceOrientationEvent" in window) {
       try {
         const orientationApi = DeviceOrientationEvent as OrientationPermissionEvent;
@@ -159,7 +179,12 @@ export function useWalkingMode({ statues, collected, onNearby }: Options) {
           ? await orientationApi.requestPermission()
           : "granted";
         if (permission === "granted") {
-          window.addEventListener("deviceorientation", processOrientation);
+          const orientationEvent: OrientationEventName =
+            "ondeviceorientationabsolute" in window
+              ? "deviceorientationabsolute"
+              : "deviceorientation";
+          orientationEventRef.current = orientationEvent;
+          window.addEventListener(orientationEvent, processOrientation as EventListener);
         } else {
           setCompassAvailable(false);
         }
@@ -184,9 +209,9 @@ export function useWalkingMode({ statues, collected, onNearby }: Options) {
         setError("Sinal de localização fraco. O radar continuará tentando.");
       },
       {
-        enableHighAccuracy: false,
-        maximumAge: 20_000,
-        timeout: 30_000,
+        enableHighAccuracy: true,
+        maximumAge: 3_000,
+        timeout: 15_000,
       },
     );
   }, [processOrientation, processPosition]);
