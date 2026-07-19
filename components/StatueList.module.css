@@ -195,3 +195,10 @@
   font-size: 13px;
   font-weight: 600;
 }
+
+@media (max-width: 760px) {
+  .list {
+    flex: none;
+    overflow-y: visible;
+  }
+}
