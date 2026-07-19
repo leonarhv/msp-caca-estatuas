@@ -157,6 +157,7 @@ export default function MapView({
 }: Props) {
   const markerRefs = useRef<Record<string, L.Marker | null>>({});
   const mapRef = useRef<L.Map | null>(null);
+  const centerOnNextLocation = useRef(false);
   const [selectedStatueId, setSelectedStatueId] = useState<string | null>(null);
 
   const selectedStatue = statues.find((s) => s.id === selectedStatueId);
@@ -165,11 +166,14 @@ export default function MapView({
     if (focusStatueId) setSelectedStatueId(focusStatueId);
   }, [focusStatueId]);
 
+  useEffect(() => {
+    if (!userLoc || !centerOnNextLocation.current) return;
+    centerOnNextLocation.current = false;
+    mapRef.current?.flyTo([userLoc.lat, userLoc.lng], 16, { duration: 0.6 });
+  }, [userLoc]);
+
   const handleLocate = () => {
-    if (userLoc) {
-      mapRef.current?.flyTo([userLoc.lat, userLoc.lng], 16, { duration: 0.6 });
-      return;
-    }
+    centerOnNextLocation.current = true;
     onRequestLocation();
   };
 
@@ -299,9 +303,17 @@ export default function MapView({
         aria-label={
           locating
             ? "Obtendo sua localização"
-            : "Centralizar na minha localização"
+            : userLoc
+              ? "Atualizar minha localização"
+              : "Obter minha localização"
         }
-        title={locating ? "Obtendo sua localização…" : "Minha localização"}
+        title={
+          locating
+            ? "Atualizando localização…"
+            : userLoc
+              ? "Atualizar minha localização"
+              : "Minha localização"
+        }
       >
         <svg viewBox="0 0 24 24" aria-hidden="true">
           <circle cx="12" cy="12" r="4" />

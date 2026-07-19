@@ -30,7 +30,12 @@ export function useGeolocation() {
         );
         setLoading(false);
       },
-      { enableHighAccuracy: true, timeout: 10000 },
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        // Always ask the device for a fresh fix when the user refreshes.
+        maximumAge: 0,
+      },
     );
   }, []);
 
