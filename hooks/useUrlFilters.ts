@@ -27,7 +27,7 @@ export function useUrlFilters() {
     );
   }, [searchParams]);
 
-  const hideCollected = searchParams.get("hideCollected") === "1";
+  const hideCollected = searchParams.get("hideCollected") !== "0";
   const query = searchParams.get("q") || "";
 
   const update = useCallback(
@@ -50,8 +50,8 @@ export function useUrlFilters() {
         else params.set("tier", [...patch.tiers].join(","));
       }
       if (patch.hideCollected !== undefined) {
-        if (!patch.hideCollected) params.delete("hideCollected");
-        else params.set("hideCollected", "1");
+        if (patch.hideCollected) params.delete("hideCollected");
+        else params.set("hideCollected", "0");
       }
       if (patch.query !== undefined) {
         if (!patch.query) params.delete("q");
